@@ -83,7 +83,6 @@ def contour_plot(
     X, Y = np.meshgrid(x, y)
     Z = f(X, Y)
 
-    # fig = plt.figure()
     ax = plt.axes(projection="3d")
     ax.contour3D(X, Y, Z, 100, cmap='viridis')
     ax.set_xlabel('x')
