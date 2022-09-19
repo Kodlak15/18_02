@@ -70,6 +70,8 @@ def contour_plot(
     view: Union[Tuple, None] = None,
     ) -> None:
     """
+    Creates a contour plot for a function with 2 input variables
+
     f: A function of 2 variables to plot, ex: lambda x, y: x**2 + y**2
     x_interval: The interval for the first input variable
     y_interval: The interval for the second input variable
