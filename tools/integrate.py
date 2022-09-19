@@ -8,7 +8,7 @@ def integrate(
     digits: int = 6, 
     ) -> np.float64:
     """
-    Returns an estimate for the integral of a function over an interval
+    Returns an estimate for the integral of a single variable function over an interval
 
     f: The function being integrated, ex: lambda x: x**2
     interval: A tuple containing the bounds of integration (a, b)
