@@ -12,6 +12,7 @@ def plot_functions(
     ) -> None:
     """
     Plots a list of functions over their respective intervals
+    Helpful for comparing multiple functions as once
 
     functions: a list of lambda functions to be plotted
         ex: [lambda x: np.sin(x), lambda x: 2 * x, ...]
