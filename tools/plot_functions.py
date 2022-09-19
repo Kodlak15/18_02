@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List, Tuple
+from mpl_toolkits import mplot3d
+from typing import Callable, List, Tuple, Union
 
 plt.style.use("seaborn")
 
@@ -61,24 +62,33 @@ def plot_functions(
 
     plt.show()
 
-### Example usage of this function
-# if __name__ == "__main__":
-#     intervals = [
-#         (-np.pi, np.pi),
-#         (-np.pi, np.pi),
-#         (0, 10),
-#         (0, 10),
-#         (-10, 10),
-#         (1e-4, 10)
-#     ]
-#
-#     functions = [
-#         lambda x: np.sin(x),
-#         lambda x: np.cos(x),
-#         lambda x: 5 - x,
-#         lambda x: np.exp(-x),
-#         lambda x: x**2,
-#         lambda x: np.log(x),
-#     ]
-#
-#     plot_functions(functions, intervals)
+def contour_plot(
+    f: Callable, 
+    x_interval: Tuple, 
+    y_interval: Tuple, 
+    n: int, 
+    view: Union[Tuple, None] = None,
+    ) -> None:
+    """
+    f: A function of 2 variables to plot, ex: lambda x, y: x**2 + y**2
+    x_interval: The interval for the first input variable
+    y_interval: The interval for the second input variable
+    n: The number of datapoints in each of the intervals
+    view: A tuple (x, y) that changes the perspective the plot is viewed at
+    """
+    x = np.linspace(*x_interval, n)
+    y = np.linspace(*y_interval, n)
+    X, Y = np.meshgrid(x, y)
+    Z = f(X, Y)
+
+    # fig = plt.figure()
+    ax = plt.axes(projection="3d")
+    ax.contour3D(X, Y, Z, 100, cmap='viridis')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+
+    if view:
+        ax.view_init(*view)
+        
+    plt.show()
