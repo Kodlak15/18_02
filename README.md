@@ -1,5 +1,5 @@
 # 18.02x (Part 2 - Integration)
-The code in this repository is a collection of tools and workspaces I am creating while taking an online multivariable calculus course through MITx on EdX.org. I plan to release my notebooks after the due dates for the associated content so that I am not giving away solutions. My hope is that some of my fellow learners find these tools useful, insightful, or at the very least interesting to tinker around with. Feel free to use this code and edit it as you please! 
+The code in this repository is a collection of tools and workspaces I am creating while taking an online multivariable calculus course through MITx on EdX.org. My hope is that some of my fellow learners find these tools useful, insightful, or at the very least interesting to tinker around with. Feel free to use this code and edit it as you please! 
 
 Here are instructions for bringing all of the tools into scope for your workspace:
 - Clone this repository to some location on your computer, make note of the path
