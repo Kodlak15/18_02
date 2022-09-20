@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, Callable 
+from typing import Tuple, Callable
 
 def integrate(
     f: Callable, 

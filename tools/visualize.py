@@ -6,8 +6,8 @@ from typing import Callable, List, Tuple, Union
 plt.style.use("seaborn")
 
 def plot_functions(
-    functions: List, 
-    intervals: List[Tuple],
+    functions: List[Callable], 
+    intervals: List[Tuple[float, float]],
     size: int = 8,
     s: int = int(1e4),
     ) -> None:
@@ -64,8 +64,8 @@ def plot_functions(
 
 def contour_plot(
     f: Callable, 
-    x_interval: Tuple, 
-    y_interval: Tuple, 
+    x_interval: Tuple[float, float], 
+    y_interval: Tuple[float, float], 
     n: int, 
     view: Union[Tuple, None] = None,
     ) -> None:
