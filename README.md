@@ -4,11 +4,9 @@ The code in this repository is a collection of tools and workspaces I am creatin
 Here are instructions for bringing all of the tools into scope for your workspace:
 - Clone this repository to some location on your computer, make note of the path
 - Open a python file (or Jupyter Notebook), and add the following lines to the top of the file:
-  1. import sys
-  2. sys.path.append("path/to/18_02"), replace with the path you made note of earlier
-  3. from tools import *
-
 ```
-# Testing
-x = 5
+# your_python_workspace.py
+import sys
+sys.path.append("your/path/to/18_02")
+from tools import *
 ```
