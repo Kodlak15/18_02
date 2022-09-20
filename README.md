@@ -7,3 +7,8 @@ Here are instructions for bringing all of the tools into scope for your workspac
   1. import sys
   2. sys.path.append("path/to/18_02"), replace with the path you made note of earlier
   3. from tools import *
+
+```
+# Testing
+x = 5
+```
