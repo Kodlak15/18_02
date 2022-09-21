@@ -18,7 +18,8 @@ class Function:
     ex:
         x = Symbol('x')
         y = Symbol('y')
-        f = Function(x**2 + y**2)
+        params = [x, y]
+        f = Function(x**2 + y**2, params)
     """
     def __init__(self, f: Expr, params: List[Symbol]) -> None:
         self.f = f.simplify()
