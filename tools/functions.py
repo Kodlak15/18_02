@@ -144,6 +144,11 @@ class Function:
         region: Union[List[Tuple[float, float]], None],
         density: Expr,
         ) -> Tuple[float, float]:
+        """
+        Computes an objects center of mass
+
+        ToDo
+        """
         fx = Function(self.params[0] * self.state, self.params)
         fy = Function(self.params[1] * self.state, self.params)
         cx = fx.average_value_weighted(variables, region, density)
