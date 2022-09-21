@@ -1,7 +1,7 @@
 import sympy as sp
 from sympy import Expr, Symbol
 from string import ascii_letters as letters
-from typing import Tuple, Union
+from typing import Dict, List, Tuple, Union, Any
 
 ### UNFINISHED ###
 
@@ -17,6 +17,9 @@ class Function:
 
     def __str__(self) -> str:
         return str(self.f)
+
+    def __call__(self, subs: Dict[Symbol, Union[Symbol, float]] = {}) -> Any:
+         return self.f.subs(subs)
 
     @property
     def integrand(self) -> Expr:
@@ -35,17 +38,33 @@ class Function:
         assert len(self.memory) > 0, "Nothing to undo"
         self.f = self.memory.pop(-1)
         
-    def integrate(
+    def integral(
         self, 
         var: Symbol, 
         interval: Union[Tuple[float, float], None] = None,
-        ) -> None:
+        ) -> Expr:
         """
         (ToDo)
         """
-        self.memory.append(self.f)
         if not interval:
-            self.f = self.f.integrate(var).simplify()
+            return self.f.integrate(var).simplify()
         else:
-            self.f = self.f.integrate((var, *interval))
+            return self.f.integrate((var, *interval)).simplify()
+
+    def integrate(
+        self, 
+        variables: List[Symbol], 
+        intervals: Union[List[Tuple[float, float]], None] = None,
+        ) -> None:
+        """
+        ToDo
+        """
+        self.memory.append(self.f)
+        if not intervals:
+            for var in variables:
+                self.f = self.integral(var)
+        else:
+            for var, interval in zip(variables, intervals):
+                self.f = self.integral(var, interval)
+
 
