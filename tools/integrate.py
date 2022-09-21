@@ -3,7 +3,7 @@ from typing import Tuple, Callable
 
 def integrate(
     f: Callable, 
-    interval: Tuple,
+    interval: Tuple[float, float],
     n: int,
     digits: int = 6, 
     ) -> np.float64:
