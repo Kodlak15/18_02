@@ -67,6 +67,8 @@ class Function:
             for var, interval in zip(variables, intervals):
                 self.f = self.integral(var, interval)
 
+        return self()
+
 
 
 
