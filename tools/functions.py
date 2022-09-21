@@ -20,9 +20,9 @@ class Function:
         y = Symbol('y')
         f = Function(x**2 + y**2)
     """
-    def __init__(self, f: Expr) -> None:
+    def __init__(self, f: Expr, params: List[Symbol]) -> None:
         self.f = f.simplify()
-        self.params = list(f.free_symbols)
+        self.params = params
         self.diffs = {p: Symbol('d' + str(p)) if str(p) in letters else Symbol(f"d\{p}") for p in self.params}
         self.memory = []
 
@@ -31,6 +31,10 @@ class Function:
 
     def __call__(self, subs: Dict[Symbol, Union[Symbol, float]] = {}) -> Any:
          return self.f.subs(subs)
+
+    @property
+    def state(self):
+        return self.f
 
     def undo(self) -> None:
         """
@@ -61,33 +65,73 @@ class Function:
     def integrate(
         self, 
         variables: List[Symbol], 
-        intervals: Union[List[Tuple[float, float]], None] = None,
+        region: Union[List[Tuple[float, float]], None] = None,
         ) -> None:
         """
         Integrates the function
         This operation alters the state of the function, to reset the state call self.undo()
-        It is the users responsibility to set up the order of integration correctly, but here are a couple guidelines
+        It is the users responsibility to set up the order of integration correctly, but here are a few guidelines
             1. make sure variables and their bounds of integration are entered in the same order
+                - integrand * dx * dy * dz
                 - variables = [x, y, z]
-                - intervals = [x_interval, y_interval, z_interval]
+                - region = [x_interval, y_interval, z_interval]
             2. if you want this function to return a number, integrate over all the variables and make sure the last interval does not depend on any variables
+            3. if integrating over a variable, the associated interval should not contain that variable
 
         variables: A list of the variables of integration
-        intervals: A list of the intervals to integrate over
+        region: A list of the intervals to integrate over, representing the region of integration
         """
         self.memory.append(self.f)
-        if not intervals:
+        if not region:
             for var in variables:
                 self.f = self.integral(var)
         else:
-            for var, interval in zip(variables, intervals):
+            for var, interval in zip(variables, region):
                 self.f = self.integral(var, interval)
 
-        return self()
+    def average_value(
+        self,
+        variables: List[Symbol], 
+        region: Union[List[Tuple[float, float]], None],
+        ) -> float:
+        """
+        Computes the average value of the function over a given region
+        S represents the definite integral of the function
+        A represents the total area of the region
+        See documentation for integrate function for instructions on setting up region
 
+        variables: A list of the variables of integration
+        region: A list of the intervals to integrate over, representing the region of integration
+        """
+        I1 = Function(self.f, self.params)
+        I1.integrate(variables, region)
+        S = I1.state
+        I2 = Function(1 + 0*variables[0], self.params)
+        I2.integrate(variables, region)
+        A = I2.state
 
+        return float(S / A)
 
+    def average_value_weighted(
+        self,
+        variables: List[Symbol],
+        region: Union[List[Tuple[float, float]], None],
+        density: Expr,
+        ) -> float:
+        """
+        Computes the weighted average of the function over a given region
+        S represents the definite integral of the function
+        M represents the total mass (area * density) of the region
+        See documentation for integrate function for instructions on setting up region
 
+        variables: A list of the variables of integration
+        region: A list of the intervals to integrate over, representing the region of integration
+        """
+        I1 = Function(self.f * density, self.params)
+        I1.integrate(variables, region)
+        S = I1.state
+        I2 = Function(density, self.params)
+        I2.integrate(variables, region)
+        M = I2.state
 
-
-
+        return float(S / M)
