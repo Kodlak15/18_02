@@ -1,7 +1,7 @@
 import sympy as sp
 from sympy import Expr, Symbol
 from string import ascii_letters as letters
-from typing import Dict, List, Tuple, Union, Any
+from typing import Dict, List, Tuple, Union, Any 
 
 ### UNFINISHED ###
 
@@ -66,5 +66,10 @@ class Function:
         else:
             for var, interval in zip(variables, intervals):
                 self.f = self.integral(var, interval)
+
+
+
+
+
 
 
