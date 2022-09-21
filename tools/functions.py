@@ -37,8 +37,10 @@ class Function:
         Undoes the last operation that altered the state of the function
         Replaces the current state with the most recent state saved in the memory array
         """
-        assert len(self.memory) > 0, "Nothing to undo"
-        self.f = self.memory.pop(-1)
+        if len(self.memory) == 0:
+            print("Nothing to undo")
+        else:
+            self.f = self.memory.pop(-1)
         
     def integral(
         self, 
