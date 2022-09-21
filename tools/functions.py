@@ -127,6 +127,8 @@ class Function:
 
         variables: A list of the variables of integration
         region: A list of the intervals to integrate over, representing the region of integration
+        density: A sympy expression representing the density over the region 
+            - ex: h(x, y) = x * y
         """
         I1 = Function(self.f * density, self.params)
         I1.integrate(variables, region)
