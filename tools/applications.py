@@ -1,4 +1,6 @@
-from .functions import *
+from typing import List, Tuple
+from sympy import Symbol, Expr
+from .functions import Function
 
 def center_of_mass(
     f: Function,
@@ -17,3 +19,6 @@ def center_of_mass(
     cy = fy.average_value_weighted(variables, region, density)
 
     return cx, cy
+
+def moment_of_intertia():
+    pass

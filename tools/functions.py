@@ -1,4 +1,3 @@
-import sympy as sp
 from sympy import Expr, Symbol
 from string import ascii_letters as letters
 from typing import Dict, List, Tuple, Union, Any 
