@@ -17,15 +17,16 @@ def arc_len(r: float, t: float) -> float:
 def to_polar(f: Expr) -> Expr:
     """
     Converts a sympy expression in rectangular coordinates to polar coordinates
+    If f is an integrand, make sure to include the differential dA
 
     f: A sympy expression in terms of x, y, and dA 
         ex: f = (x**2 + y**2) * dA
     """
     x = Symbol('x')
     y = Symbol('y')
-    dA = Symbol("dA")
     r = Symbol('r')
     t = Symbol("theta")
+    dA = Symbol("dA")
     dr = Symbol("dr")
     dt = Symbol(r"d\theta")
 

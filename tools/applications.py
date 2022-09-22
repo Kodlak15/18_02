@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from sympy import Symbol, Expr
 from .functions import Function
 
@@ -7,18 +7,38 @@ def center_of_mass(
     variables: List[Symbol],
     region: List[Tuple[float, float]],
     density: Expr,
-    ) -> Tuple[float, float]:
+    ) -> Dict[Symbol, float]:
     """
     Computes an objects center of mass
 
-    ToDo
+    f: the function being analyzed
+    variables: a list of the sympy symbols to integrate over 
+    region: a list of the intervals to integrate over
+        - make sure the intervals are entered in the same order as their respective variables
+        - ie: variables = [x, y, z] <-> region = [x_interval, y_interval, z_interval]
+    density: a sympy expression representing the density of the object
     """
-    fx = Function(f.params[0] * f.state, f.params)
-    fy = Function(f.params[1] * f.state, f.params)
-    cx = fx.average_value_weighted(variables, region, density)
-    cy = fy.average_value_weighted(variables, region, density)
+    center_of_mass = {}
+    for p in f.params:
+        S = Function(p * f.state, f.params)
+        center_of_mass[p] = S.average_value_weighted(variables, region, density)
+    return center_of_mass
 
-    return cx, cy
+def moment_of_intertia(
+    r: Function,
+    variables: List[Symbol],
+    region: List[Tuple[float, float]],
+    density: Expr,
+    ) -> float:
+    """
+    Computes the moment of intertia for an object about an axis
 
-def moment_of_intertia():
-    pass
+    r: the function representing distance to the axis
+    variables: a list of the sympy symbols to integrate over
+    region: a list of the intervals to integrate over
+        - make sure the intervals are entered in the same order as their respective variables
+        - ie: variables = [x, y, z] <-> region = [x_interval, y_interval, z_interval]
+    density: a sympy expression representing the density of the object
+    """
+    S = Function(r.state**2 * density, r.params) 
+    return S.average_value_weighted(variables, region, density)

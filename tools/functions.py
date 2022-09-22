@@ -12,7 +12,10 @@ class Function:
         - change of variables (not done)
         - etc.
 
-    f: An expression involving sympy symbols
+    state: An expression involving sympy symbols
+        - some methods will alter the state of the function
+        - the class remembers changes that are made to the state
+    params: A list of sympy symbols that the function depends on
 
     ex:
         x = Symbol('x')
@@ -21,20 +24,16 @@ class Function:
         f = Function(x**2 + y**2, params)
     """
     def __init__(self, f: Expr, params: List[Symbol]) -> None:
-        self.f = f.simplify()
+        self.state = f.simplify()
         self.params = params
         self.diffs = {p: Symbol('d' + str(p)) if str(p) in letters else Symbol(f"d\{p}") for p in self.params}
         self.memory = []
 
     def __str__(self) -> str:
-        return str(self.f)
+        return str(self.state)
 
     def __call__(self, subs: Dict[Symbol, Union[Symbol, float]] = {}) -> Any:
-         return self.f.subs(subs)
-
-    @property
-    def state(self):
-        return self.f
+         return self.state.subs(subs)
 
     def undo(self) -> None:
         """
@@ -44,7 +43,7 @@ class Function:
         if len(self.memory) == 0:
             print("Nothing to undo")
         else:
-            self.f = self.memory.pop(-1)
+            self.state = self.memory.pop(-1)
         
     def integral(
         self, 
@@ -58,9 +57,9 @@ class Function:
         interval: The interval to integrate over (if applicable)
         """
         if not interval:
-            return self.f.integrate(var).simplify()
+            return self.state.integrate(var).simplify()
         else:
-            return self.f.integrate((var, *interval)).simplify()
+            return self.state.integrate((var, *interval)).simplify()
 
     def integrate(
         self, 
@@ -81,13 +80,13 @@ class Function:
         variables: A list of the variables of integration
         region: A list of the intervals to integrate over, representing the region of integration
         """
-        self.memory.append(self.f)
+        self.memory.append(self.state)
         if not region:
             for var in variables:
-                self.f = self.integral(var)
+                self.state = self.integral(var)
         else:
             for var, interval in zip(variables, region):
-                self.f = self.integral(var, interval)
+                self.state = self.integral(var, interval)
 
     def average_value(
         self,
@@ -103,7 +102,7 @@ class Function:
         variables: A list of the variables of integration
         region: A list of the intervals to integrate over, representing the region of integration
         """
-        I1 = Function(self.f, self.params)
+        I1 = Function(self.state, self.params)
         I1.integrate(variables, region)
         S = I1.state
         I2 = Function(1 + 0*variables[0], self.params)
@@ -128,7 +127,7 @@ class Function:
         region: A list of the intervals to integrate over, representing the region of integration
         density: A sympy expression representing the density over the region 
         """
-        I1 = Function(self.f * density, self.params)
+        I1 = Function(self.state * density, self.params)
         I1.integrate(variables, region)
         S = I1.state
         I2 = Function(density, self.params)
@@ -137,20 +136,3 @@ class Function:
 
         return float(S / M)
 
-    # def center_of_mass(
-    #     self,
-    #     variables: List[Symbol],
-    #     region: Union[List[Tuple[float, float]], None],
-    #     density: Expr,
-    #     ) -> Tuple[float, float]:
-    #     """
-    #     Computes an objects center of mass
-
-    #     ToDo
-    #     """
-    #     fx = Function(self.params[0] * self.state, self.params)
-    #     fy = Function(self.params[1] * self.state, self.params)
-    #     cx = fx.average_value_weighted(variables, region, density)
-    #     cy = fy.average_value_weighted(variables, region, density)
-
-    #     return cx, cy
