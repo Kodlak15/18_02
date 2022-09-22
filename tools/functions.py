@@ -93,7 +93,7 @@ class Function:
     def average_value(
         self,
         variables: List[Symbol], 
-        region: Union[List[Tuple[float, float]], None],
+        region: List[Tuple[float, float]],
         ) -> float:
         """
         Computes the average value of the function over a given region
@@ -116,7 +116,7 @@ class Function:
     def average_value_weighted(
         self,
         variables: List[Symbol],
-        region: Union[List[Tuple[float, float]], None],
+        region: List[Tuple[float, float]],
         density: Expr,
         ) -> float:
         """

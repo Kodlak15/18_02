@@ -3,7 +3,7 @@ from .functions import *
 def center_of_mass(
     f: Function,
     variables: List[Symbol],
-    region: Union[List[Tuple[float, float]], None],
+    region: List[Tuple[float, float]],
     density: Expr,
     ) -> Tuple[float, float]:
     """
