@@ -2,6 +2,11 @@ from sympy import Expr, Symbol
 from string import ascii_letters as letters
 from typing import Dict, List, Tuple, Union, Any 
 
+# To Do:
+# - Simplify or add support for change of coordinates
+# - Refactoring and simplifying
+# - Consider eliminating "state" concept, let user handle state manipulation manually
+
 class Function:
     """
     This class utilizes the sympy library to provide a convenient way to work with functions
@@ -44,6 +49,14 @@ class Function:
             print("Nothing to undo")
         else:
             self.state = self.memory.pop(-1)
+
+    def update(self, new_state: Expr) -> None:
+        """
+        Updates the state of the function
+
+        new_state: the new sympy expression assigned to the state of the function
+        """
+        self.state = new_state
         
     def integral(
         self, 
@@ -94,6 +107,9 @@ class Function:
         region: List[Tuple[float, float]],
         ) -> float:
         """
+        NEEDS FIXING
+        - not currently working properly for polar coordinates
+
         Computes the average value of the function over a given region
         S represents the definite integral of the function
         A represents the total area of the region

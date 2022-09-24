@@ -41,4 +41,5 @@ def moment_of_intertia(
     density: a sympy expression representing the density of the object
     """
     S = Function(r.state**2 * density, r.params) 
-    return S.average_value_weighted(variables, region, density)
+    S.integrate(variables, region)
+    return float(S.state)
