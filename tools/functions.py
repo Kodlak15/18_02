@@ -1,26 +1,20 @@
-from sympy import Expr, Symbol
+import sympy as sp
+from sympy import Expr, Symbol 
 from string import ascii_letters as letters
 from typing import Dict, List, Tuple, Union, Any 
-
-# To Do:
-# - Simplify or add support for change of coordinates
-# - Refactoring and simplifying
-# - Consider eliminating "state" concept, let user handle state manipulation manually
+from copy import deepcopy
 
 class Function:
     """
     This class utilizes the sympy library to provide a convenient way to work with functions
-    Some of the functionality I would like to implement for this class includes:
-        - evaluation (done)
-        - differentiation (not done)
-        - integration (mostly done, but more functionality will be added as course continues)
-        - change of variables (not done)
-        - etc.
 
     state: An expression involving sympy symbols
         - some methods will alter the state of the function
         - the class remembers changes that are made to the state
     params: A list of sympy symbols that the function depends on
+    coord_sys: The coordinate system being used (rectangular, polar, etc.)
+        - If r or theta are used in the expression, polar coordinates will be assumed
+        - A polar coordinate system may be chosen manually as well
 
     ex:
         x = Symbol('x')
@@ -28,10 +22,21 @@ class Function:
         params = [x, y]
         f = Function(x**2 + y**2, params)
     """
-    def __init__(self, f: Expr, params: List[Symbol]) -> None:
+    def __init__(
+        self, 
+        f: Expr, 
+        params: List[Symbol], 
+        coord_sys: str = "rectangular"
+        ) -> None:
         self.state = f.simplify()
         self.params = params
-        self.diffs = {p: Symbol('d' + str(p)) if str(p) in letters else Symbol(f"d\{p}") for p in self.params}
+        self.diffs = {str(p): Symbol('d' + str(p)) if str(p) in letters else Symbol(f"d\{p}") for p in self.params}
+
+        if Symbol('r') in params or Symbol("theta") in params:
+            self.coord_sys = "polar"
+        else:
+            self.coord_sys = coord_sys
+            
         self.memory = []
 
     def __str__(self) -> str:
@@ -40,6 +45,46 @@ class Function:
     def __call__(self, subs: Dict[Symbol, Union[Symbol, float]] = {}) -> Any:
          return self.state.subs(subs)
 
+    @property
+    def integrand(self):
+        """
+        The integrand for the expression
+        If the coordinate system is polar and we are just starting to integrate, multiply the state by r
+            - This is because dA = r * dr * dtheta
+        Otherwise, the integrand is simply the current state of the function
+        """
+        if self.coord_sys == "polar" and len(self.diffs) == len(self.params):
+            return Symbol('r') * self.state
+        return self.state
+
+    def to_polar(self) -> None:
+        """
+        Converts an expression of 2 variables in rectangular coordinates to polar coordinates
+        Makes the following assumptions:
+            - self.params[0] <-> x
+            - self.params[1] <-> y
+            - This does not mean you must you symbols x and y, but the order they are entered indicates their meaning
+        This function will reset the function to its original state
+        """
+        assert len(self.params) <= 2, "Conversion for 3+ parameters not supported as of now"
+        if self.coord_sys == "polar":
+            return 
+
+        self.reset() # Reset to original state
+        self.save()
+        r = Symbol('r')
+        t = Symbol("theta")
+
+        subs = {
+            self.params[0]: r * sp.cos(t),
+            self.params[1]: r * sp.sin(t),
+        }
+
+        self.state = self.state.subs(subs).simplify()
+        self.params = [r, t]
+        self.diffs = {str(p): Symbol('d' + str(p)) if str(p) in letters else Symbol(f"d\{p}") for p in self.params}
+        self.coord_sys = "polar"
+        
     def undo(self) -> None:
         """
         Undoes the last operation that altered the state of the function
@@ -48,16 +93,18 @@ class Function:
         if len(self.memory) == 0:
             print("Nothing to undo")
         else:
-            self.state = self.memory.pop(-1)
+            self = self.memory[-1]
 
-    def update(self, new_state: Expr) -> None:
+    def reset(self) -> None:
         """
-        Updates the state of the function
+        Resets the function to its original state
+        """
+        if len(self.memory) > 0:
+            self = self.memory[0]
 
-        new_state: the new sympy expression assigned to the state of the function
-        """
-        self.state = new_state
-        
+    def save(self) -> None:
+        self.memory.append(copy_function(self))
+
     def integral(
         self, 
         var: Symbol, 
@@ -70,9 +117,9 @@ class Function:
         interval: The interval to integrate over (if applicable)
         """
         if not interval:
-            return self.state.integrate(var).simplify()
+            return self.integrand.integrate(var).simplify()
         else:
-            return self.state.integrate((var, *interval)).simplify()
+            return self.integrand.integrate((var, *interval)).simplify()
 
     def integrate(
         self, 
@@ -93,62 +140,14 @@ class Function:
         variables: A list of the variables of integration
         region: A list of the intervals to integrate over, representing the region of integration
         """
-        self.memory.append(self.state)
+        self.save()
         if not region:
             for var in variables:
                 self.state = self.integral(var)
         else:
             for var, interval in zip(variables, region):
                 self.state = self.integral(var, interval)
+                self.diffs.pop(str(var))
 
-    def average_value(
-        self,
-        variables: List[Symbol], 
-        region: List[Tuple[float, float]],
-        ) -> float:
-        """
-        NEEDS FIXING
-        - not currently working properly for polar coordinates
-
-        Computes the average value of the function over a given region
-        S represents the definite integral of the function
-        A represents the total area of the region
-        See documentation for integrate function for instructions on setting up region
-
-        variables: A list of the variables of integration
-        region: A list of the intervals to integrate over, representing the region of integration
-        """
-        I1 = Function(self.state, self.params)
-        I1.integrate(variables, region)
-        S = I1.state
-        I2 = Function(1 + 0*variables[0], self.params)
-        I2.integrate(variables, region)
-        A = I2.state
-
-        return float(S / A)
-
-    def average_value_weighted(
-        self,
-        variables: List[Symbol],
-        region: List[Tuple[float, float]],
-        density: Expr,
-        ) -> float:
-        """
-        Computes the weighted average of the function over a given region
-        S represents the definite integral of the function
-        M represents the total mass (area * density) of the region
-        See documentation for integrate function for instructions on setting up region
-
-        variables: A list of the variables of integration
-        region: A list of the intervals to integrate over, representing the region of integration
-        density: A sympy expression representing the density over the region 
-        """
-        I1 = Function(self.state * density, self.params)
-        I1.integrate(variables, region)
-        S = I1.state
-        I2 = Function(density, self.params)
-        I2.integrate(variables, region)
-        M = I2.state
-
-        return float(S / M)
-
+def copy_function(f: Function) -> Function:
+    return deepcopy(f)
