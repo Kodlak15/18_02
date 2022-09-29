@@ -1,7 +1,9 @@
-import sympy as sp
 from sympy import Expr, Symbol, Matrix
-from string import ascii_letters as letters
-from typing import Dict, List, Tuple, Union
+from typing import List, Tuple, Union
+
+from .transformations import Transform
+
+# pyright: reportGeneralTypeIssues=false
 
 class Function:
     """
@@ -24,20 +26,16 @@ class Function:
         params: List[Symbol]
         ) -> None:
         self.expr = expr.simplify()
+        self.integrand = expr.simplify()
         self.params = params
 
-    @property
-    def integrand(self):
-        """
-        The integrand for the expression
-
-        The main purpose of this at the moment is to add a multiple of r if using polar coordinates
-        This is because dA = r * dr * dtheta
-        """
-        if Symbol('r') in self.params or Symbol("theta") in self.params:
-            return Symbol('r') * self.expr
-        else:
-            return self.expr
+    def transform(
+        self,
+        transform: Transform,
+        ) -> None:
+        expr, scale = transform(self.expr)
+        self.expr = expr
+        self.integrand = scale * expr
 
     def diff(self, var: Symbol):
         """
@@ -77,3 +75,5 @@ class Function:
                 integrand = integrand.integrate((var, *interval))
 
         return integrand
+
+    

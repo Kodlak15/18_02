@@ -3,6 +3,9 @@ from sympy import Symbol, Expr
 
 from .functions import Function
 
+### NEEDS EDITING
+### Dependent code has changed
+
 def area(
     variables: List[Symbol],
     region: List[Tuple[float, float]],

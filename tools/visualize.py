@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from typing import Callable, List, Tuple, Union
 
+# pyright: reportGeneralTypeIssues=false, reportOptionalMemberAccess=false
+
 plt.style.use("seaborn")
 
 def plot_functions(
