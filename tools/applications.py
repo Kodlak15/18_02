@@ -3,9 +3,6 @@ from sympy import Symbol, Expr
 
 from .functions import Function
 
-### NEEDS EDITING
-### Dependent code has changed
-
 def area(
     variables: List[Symbol],
     region: List[Tuple[float, float]],
@@ -14,8 +11,7 @@ def area(
     Computes the area of a region
     """
     a = Function(1 + 0*Symbol('x'), variables)
-    a.integrate(variables, region)
-    return a.state
+    return a.integral(variables, region)
 
 def mass(
     variables: List[Symbol],
@@ -26,8 +22,7 @@ def mass(
     Computes the total mass over a region
     """
     m = Function(density, variables)
-    m.integrate(variables, region)
-    return m.state
+    return m.integral(variables, region)
 
 def average_value(
     f: Function,
@@ -43,10 +38,10 @@ def average_value(
     variables: A list of the variables of integration
     region: A list of the intervals to integrate over, representing the region of integration
     """
-    s = Function(f.state, f.params)     
-    s.integrate(variables, region)
+    s = f.integral(variables, region)     
     a = area(variables, region)
-    return s.state / a
+    return s / a
+    
 
 def average_value_weighted(
     f: Function,
@@ -64,10 +59,9 @@ def average_value_weighted(
     region: A list of the intervals to integrate over, representing the region of integration
     density: A sympy expression representing the density over the region 
     """
-    s = Function(f.state * density, f.params)
-    s.integrate(variables, region)
+    s = Function(f.expr * density, f.params).integral(variables, region)
     m = mass(variables, region, density)
-    return s.state / m
+    return s / m
 
 def center_of_mass(
     f: Function,
@@ -87,7 +81,7 @@ def center_of_mass(
     """
     center_of_mass = {}
     for p in f.params:
-        s = Function(p * f.state, f.params)
+        s = Function(p * f.expr, f.params)
         center_of_mass[p] = average_value_weighted(s, variables, region, density)
     return center_of_mass
 
@@ -107,6 +101,5 @@ def moment_of_intertia(
         - ie: variables = [x, y, z] <-> region = [x_interval, y_interval, z_interval]
     density: a sympy expression representing the density of the object
     """
-    s = Function(r.state**2 * density, r.params) 
-    s.integrate(variables, region)
-    return s.state
+    s = Function(r.expr**2 * density, r.params).integral(variables, region) 
+    return s

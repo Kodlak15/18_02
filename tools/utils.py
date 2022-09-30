@@ -1,7 +1,5 @@
 import numpy as np
 from typing import Tuple, Callable
-# import sympy as sp
-# from sympy import Symbol, Expr
 
 def arc_len(r: float, t: float) -> float:
     """

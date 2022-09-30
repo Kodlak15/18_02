@@ -12,7 +12,6 @@ class Function:
     expr: A sympy expression representing the function in question
     params: A list of sympy symbols which the function depends on
         - Be aware that there may be symbols in params that do not appear in expr
-        - Also, if r, and theta are used it is assumed polar coordinates are used
 
     example:
         x, y = sympy.symbols("x y")
@@ -33,8 +32,15 @@ class Function:
         self,
         transform: Transform,
         ) -> None:
+        """
+        Transforms the coordinate system
+        For example, you may use this function to convert from rectangular to polar coordinates
+        
+        transform: The Transform object used to apply the transform
+            - see transformations.py
+        """
         expr, scale = transform(self.expr)
-        self.expr = expr
+        self.expr = expr.simplify()
         self.integrand = scale * expr
 
     def diff(self, var: Symbol):
@@ -45,9 +51,9 @@ class Function:
         """
         return self.expr.diff(var).simplify()
 
-    def grad(self):
+    def grad(self) -> Matrix:
         """
-        Computes the gradient of the expression
+        Computes the gradient of the expression, where the results is a sympy matrix
         """
         return Matrix([self.diff(var) for var in self.params])
 
@@ -66,14 +72,14 @@ class Function:
             - variables = [z, x, y]
             - region = [z_interval, x_interval, y_interval]
         """
-        integrand = self.integrand
+        res = self.integrand
         if not region:
             for var in variables:
-                integrand = integrand.integrate(var)
+                res = res.integrate(var)
         else:
             for var, interval in zip(variables, region):
-                integrand = integrand.integrate((var, *interval))
+                res = res.integrate((var, *interval))
 
-        return integrand
+        return res
 
     
