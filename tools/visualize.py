@@ -1,12 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-# from mpl_toolkits import mplot3d
 from typing import Callable, List, Tuple, Union
 
 # pyright: reportGeneralTypeIssues=false, reportOptionalMemberAccess=false
 
 plt.style.use("seaborn")
+
+def plot_polygon(points: List[Tuple[float, float]]) -> None:
+    """
+    Given a discrete set of points in 2D space, plots the polygon connecting those points
+    Can be helpful for visualizing regions of integration
+
+    points: The list of given points
+        - ex: [(0, 0), (0, 1), (1, 0)] (right triangle)
+    """
+    points.append(points[0])
+    xs, ys = zip(*points)
+    fig, ax = plt.subplots()
+    ax.plot(xs, ys)
+    plt.show
 
 def plot_functions(
     functions: List[Callable], 
