@@ -43,7 +43,10 @@ class Function:
         self.expr = expr.simplify()
         self.integrand = scale * expr
 
-    def diff(self, var: Symbol):
+    def diff(
+        self, 
+        var: Symbol
+        ) -> Expr:
         """
         Computes the derivative of the expression
 
@@ -67,6 +70,7 @@ class Function:
         
         variables: The variables to integrate over
         region: The intervals defining the region of integration
+            - If a region is not specified, an indefinite integral will be computed
 
         Important: Make sure variables and their respective regions are entered in the same order 
             - variables = [z, x, y]
