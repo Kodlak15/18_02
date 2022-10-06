@@ -10,3 +10,4 @@ import sys
 sys.path.append("your/path/to/18_02")
 from tools import *
 ```
+I ought to warn anyone who chooses to use these tools that not all of the code in this repository has been thoroughly tested, and I have run into some issues with edge cases that I have not had the chance to fix. Many of these issues will remain unresolved, as I do not have the time to keep up with the demands of maintaining this repository to its fullest extent on my own, keep up with the course, and take care of my other life responsibilities at the same time. I have tried to mention some of these issues in the docstrings for relevant functions/classes, so be sure to check those out. Be sure you are not relying on any of the code in this repository as a replacement for your own understanding!

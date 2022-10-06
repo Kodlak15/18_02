@@ -58,6 +58,9 @@ class LinearTransform(Transform):
     """
     A subclass of the Transform class
     Assumes the transformation is linear
+
+    Might need to be re-thought, strange behavior when inverting where relations contain constants
+        - See PS1B Change of variables for an example
     """
     def __init__(
         self, 
