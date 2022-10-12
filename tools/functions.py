@@ -86,4 +86,3 @@ class Function:
 
         return res
 
-    
