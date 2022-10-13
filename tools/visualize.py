@@ -115,6 +115,7 @@ def vector_field (
     y_range: Tuple[float, float],
     M: Callable,
     N: Callable,
+    ax: Callable,
     n: int = 10,
     ) -> None:
     """
@@ -124,13 +125,13 @@ def vector_field (
     y_range: The range of y values to draw over
     M: A function of two variables
     N: A function of two variables
+    ax: The axis upon which the vector field is plotted
     n: Controls the density of the vectors being drawn 
         - Higher n <-> Higher density
     """
     x, y = np.meshgrid(np.linspace(*x_range, n), np.linspace(*y_range, n))
     u, v = M(x, y), N(x, y)
     
-    _, ax = plt.subplots()
     ax.quiver(x, y, u, v)
     plt.show()
 
