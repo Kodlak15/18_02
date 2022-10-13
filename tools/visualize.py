@@ -17,7 +17,7 @@ def plot_polygon(points: List[Tuple[float, float]]) -> None:
     """
     points.append(points[0])
     xs, ys = zip(*points)
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     ax.plot(xs, ys)
     plt.show
 
@@ -109,3 +109,40 @@ def contour_plot(
         ax.view_init(*view)
         
     plt.show()
+
+def vector_field (
+    x_range: Tuple[float, float],
+    y_range: Tuple[float, float],
+    M: Callable,
+    N: Callable,
+    n: int = 10,
+    ) -> None:
+    """
+    Draws a 2D vector field
+
+    x_range: The range of x values to draw over
+    y_range: The range of y values to draw over
+    M: A function of two variables
+    N: A function of two variables
+    n: Controls the density of the vectors being drawn 
+        - Higher n <-> Higher density
+    """
+    x, y = np.meshgrid(np.linspace(*x_range, n), np.linspace(*y_range, n))
+    u, v = M(x, y), N(x, y)
+    
+    _, ax = plt.subplots()
+    ax.quiver(x, y, u, v)
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
