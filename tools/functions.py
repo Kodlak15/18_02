@@ -1,5 +1,5 @@
 from sympy import Expr, Symbol, Matrix
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 
 from .transformations import Transform
 
@@ -27,6 +27,18 @@ class Function:
         self.expr = expr.simplify()
         self.integrand = expr.simplify()
         self.params = params
+
+    def __call__(self, subs: Dict[Symbol, float]) -> Symbol:
+        """
+        Evaluate the function at a given point
+        
+        If F is a function of x and y:
+            - subs = {
+                  x: x0,
+                  y: y0
+              }
+        """
+        return self.expr.subs(subs)
 
     def transform(
         self,

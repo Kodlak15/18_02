@@ -1,5 +1,8 @@
 import numpy as np
-from typing import Tuple, Callable
+from typing import List, Tuple, Callable
+from sympy import Expr, Matrix
+
+# pyright: reportGeneralTypeIssues=false
 
 def arc_len(r: float, t: float) -> float:
     """
@@ -32,3 +35,10 @@ def integrate(
     delta = (b - a) / n
     x = np.linspace(*interval, n)
     return round(f(x).sum() * delta, digits)
+
+def curl(F: Matrix, params: List[Expr]) -> float:
+    """
+    Computes the curl of a vector field
+    Currently only supports 2D vectors
+    """
+    return F[0].diff(params[-1]) - F[-1].diff(params[0]) 

@@ -115,7 +115,7 @@ def vector_field (
     y_range: Tuple[float, float],
     M: Callable,
     N: Callable,
-    ax: Callable,
+    ax: Callable = None,
     nx: int = 10,
     ny: int = 10,
     ) -> None:
@@ -132,6 +132,9 @@ def vector_field (
     n: Controls the density of the vectors being drawn 
         - Higher n <-> Higher density
     """
+    if not ax:
+        _, ax = plt.subplots()
+
     x, y = np.meshgrid(np.linspace(*x_range, nx), np.linspace(*y_range, ny))
     u, v = M(x, y), N(x, y)
     
