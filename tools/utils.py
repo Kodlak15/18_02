@@ -36,9 +36,32 @@ def integrate(
     x = np.linspace(*interval, n)
     return round(f(x).sum() * delta, digits)
 
-def curl(F: Matrix, params: List[Expr]) -> float:
+def curl(F: Matrix, params: List[Expr]) -> Expr:
     """
     Computes the curl of a vector field
     Currently only supports 2D vectors
     """
-    return F[0].diff(params[-1]) - F[-1].diff(params[0]) 
+    return (F[-1].diff(params[0]) - F[0].diff(params[-1])).simplify()
+
+
+def angular_velocity(F: Matrix, params: List[Expr]) -> Expr:
+    """
+    Computes the angular velocity for a vector field
+    """
+    return curl(F, params) / 2
+
+def normal(v: Matrix) -> Matrix:
+    """
+    Finds the unit normal vector for some vector v
+    Currently only supports 2D vectors
+    """
+    return Matrix([v[1], -v[0]]) / v.norm()
+
+def div(F: Matrix, params: List[Expr]) -> Expr:
+    """
+    Computes the divergence of a vector field
+    """
+    return Matrix([f.diff(p) for f, p in zip(F, params)])
+
+
+
